@@ -30,4 +30,36 @@ A benchmark for evaluating Bayesian modelling agents against human experts. Each
 | GPT-5.3-Codex | ~Aug 2025 (inherits 5.2) | — | Feb 5, 2026 |
 | Gemini 3.1 Pro | Jan 2025 | — | Feb 19, 2026 |
 
-Papers from 2026 (#02 Henrich, #03 Eales) and late 2025 fall near or after these cutoffs, reducing the chance that models have memorised the solutions.
+### Data contamination risk by paper
+
+Assessed against the latest knowledge cutoff (Aug 31, 2025 — GPT-5.2 / Sonnet 4.6).
+
+**Post-cutoff** (published after Aug 31, 2025 — lowest contamination risk):
+
+| # | Paper | Published |
+|---|-------|-----------|
+| 01 | Zanzi et al. — Rat psychophysics | Oct 29, 2025 |
+| 02 | Henrich & Klauer — Diffusion censoring | 2026 |
+| 03 | Eales et al. — H5N1 viral kinetics | Jan 2026 |
+| 10 | Dimmock et al. — Brain cell counts | Nov 21, 2025 |
+
+**Near cutoff** (published within weeks of Aug 31, 2025):
+
+| # | Paper | Published |
+|---|-------|-----------|
+| 04 | Linden-Santangeli et al. — Systems biology | Aug 11, 2025 |
+| 12 | Martin & Mortlock — Robust astronomy | Aug 13, 2025 |
+
+**Pre-cutoff** (published before Aug 2025 — may appear in training data):
+
+| # | Paper | Published |
+|---|-------|-----------|
+| 05 | Ferguson et al. — Rabies vaccination | May 5, 2025 |
+| 06 | van Boven et al. — SARS-CoV-2 household | 2024 |
+| 07 | Onysk et al. — Pain learning | 2024 |
+| 08 | Grayling et al. — Supernova | 2024 |
+| 09 | Koher et al. — Epidemic Turing | 2023 |
+| 11 | Lison et al. — Nowcasting | Apr 2024 |
+| 13 | Pietila — Zero-inflated beta | Jun 2025 |
+
+Pre-cutoff papers remain valuable since the benchmark tests modelling ability, not memorisation — but post-cutoff papers have the strongest guarantee against data contamination.
