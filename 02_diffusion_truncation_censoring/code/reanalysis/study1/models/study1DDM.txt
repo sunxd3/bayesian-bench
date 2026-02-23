@@ -1,0 +1,38 @@
+model { 
+#hyperpriors 
+for (j in 1:nWCon){ 
+    muBeta[j] ~ dunif(.1,.9) 
+    muAlpha[j]  ~ dunif(.1,5) 
+    #sample hyperpriors for inference tests 
+    muBetaPrior[j] ~ dunif(.1,.9)
+    muAlphaPrior[j]  ~ dunif(.1,5) 
+} 
+for (j in 1:nWConTarget){ 
+    muDelta[j] ~ dunif(-5,5) 
+    muNDT[j] ~ dunif(.001,1) 
+    #sample hyperpriors for inference tests 
+    muDeltaPrior[j] ~ dunif(-5,5) 
+    muNDTPrior[j] ~ dunif(.001,1) 
+} 
+tauDelta ~ dgamma(.001, .001) 
+tauBeta ~ dgamma(.001, .001) 
+tauAlpha ~ dgamma(.001, .001) 
+tauNDT ~ dgamma(.001, .001) 
+#PRIORS 
+for (j in 1:nSub){ 
+    for (i in 1:nWCon){ 
+        beta[i,j] ~ dnorm( muBeta[i] , tauBeta ) T(.1,.9)
+        alpha[i,j]  ~ dnorm( muAlpha[i] , tauAlpha ) T(.1,5) 
+    } 
+    for (i in 1:nWConTarget){ 
+        delta[i,j] ~ dnorm( muDelta[i] , tauDelta ) T(-5,5) 
+        ndt[i,j] ~ dnorm( muNDT[i] , tauNDT ) T(.001,1) 
+}} 
+ 
+ 
+for( i in 1 : nData ) { 
+    ybin[i] ~ dinterval( y[i] , censorLimitVec[i,] ) 
+    y[i] ~ dwiener( alpha[wCon[i],sub[i]], ndt[wConTarget[i],sub[i]], beta[wCon[i],sub[i]], delta[wConTarget[i],sub[i]]) 
+    #prey[i] ~ dwiener( alpha[wCon[i],sub[i]], ndt[wConTarget[i],sub[i]], beta[wCon[i],sub[i]], delta[wConTarget[i],sub[i]]) 
+} 
+}

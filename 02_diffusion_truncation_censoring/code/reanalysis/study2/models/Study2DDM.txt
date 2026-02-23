@@ -1,0 +1,47 @@
+model { 
+#hyperpriors 
+for (j in 1:nBtwn) { #between subject index 
+#remove between index completely if no btwn condtion 
+   for (i in 1:nWConTarget){ #within subject index w object
+       muDelta[i,j] ~ dunif(-5,5) 
+       muNDT[i,j] ~ dunif(.001,1) 
+       #sample hyperpriors for inference tests 
+       muDeltaPrior[i,j] ~ dunif(-5,5) 
+       muNDTPrior[i,j] ~ dunif(.001,1) 
+    } 
+} 
+for (j in 1:nBtwn) { #between subject condition 
+#remove between index completely if no btwn condtion 
+    for (i in 1:nWCon){ #within subject condition wo object
+       muBeta[i,j] ~ dunif(.1,.9)
+       muBetaPrior[i,j] ~ dunif(.1,.9)
+       muAlpha[i,j]  ~ dunif(.1,5) 
+       muAlphaPrior[i,j]  ~ dunif(.1,5) 
+    } 
+} 
+for (j in 1:nBtwn) { #between subject index
+#remove between index completely if no btwn condtion 
+    tauDelta[j] ~ dgamma(.001, .001) 
+    tauBeta[j] ~ dgamma(.001, .001) 
+    tauAlpha[j] ~ dgamma(.001, .001) 
+    tauNDT[j] ~ dgamma(.001, .001) 
+} 
+#PRIORS 
+for (j in 1:nSub){ #subject index
+    for (i in 1:nWCon){ #within con index wo object
+        beta[i,j] ~ dnorm( muBeta[i,btwnCon[j]] , tauBeta[btwnCon[j]] ) T(.1,.9)
+        alpha[i,j]  ~ dnorm( muAlpha[i,btwnCon[j]] , tauAlpha[btwnCon[j]] ) T(.1,5) 
+    } 
+    for (i in 1:nWConTarget){ #within con index w object
+        delta[i,j] ~ dnorm( muDelta[i,btwnCon[j]] , tauDelta[btwnCon[j]] ) T(-5,5) 
+        ndt[i,j] ~ dnorm( muNDT[i,btwnCon[j]] , tauNDT[btwnCon[j]] ) T(.001,1) 
+}} 
+ 
+ 
+for( i in 1 : nData ) { 
+    ybin[i] ~ dinterval( y[i] , censorLimitVec[i,] ) 
+    y[i] ~ dwiener( alpha[wCon[i],sub[i]], ndt[wConTarget[i],sub[i]], beta[wCon[i],sub[i]], delta[wConTarget[i],sub[i]]) 
+    #prey[i] ~ dwiener( alpha[wCon[i],sub[i]], ndt[wConTarget[i],sub[i]], beta[wCon[i],sub[i]], delta[wConTarget[i],sub[i]]) 
+    #use prey for the posterior predictions of the rts 
+} 
+}
