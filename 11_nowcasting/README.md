@@ -1,0 +1,232 @@
+# 11 — Generative Bayesian Nowcasting (Stan)
+
+## Citation
+
+Lison A, Abbott S, Huisman J, Stadler T (2024).
+**Generative Bayesian modeling to nowcast the effective reproduction number from line list data with missing symptom onset dates.**
+*PLOS Computational Biology* 20(4): e1012021.
+
+## Links
+
+| Resource | URL |
+|----------|-----|
+| Paper | https://doi.org/10.1371/journal.pcbi.1012021 |
+| PMC | https://pmc.ncbi.nlm.nih.gov/articles/PMC11051644/ |
+| arXiv | https://arxiv.org/abs/2308.13262 |
+| GitHub | https://github.com/adrian-lison/generative-nowcasting-study |
+| Zenodo | https://doi.org/10.5281/zenodo.8279675 |
+| R package | https://github.com/epinowcast/epinowcast |
+
+## Folder structure
+
+```
+11_nowcasting/
+├── README.md                                          (this file)
+├── paper/
+│   └── pcbi.1012021.pdf                               (4.7 MB — full paper)
+├── data/                                              (empty — real data requires FOPH request)
+└── code/
+    ├── models/
+    │   ├── impute_adjust_renewal.stan                 (217 lines — THE full generative model)
+    │   ├── adjust_renewal.stan                        (stepwise: pre-imputed + truncation + R_t)
+    │   ├── impute_adjust.stan                         (joint imputation + truncation, no renewal)
+    │   ├── impute_adjust_latent.stan                  (variant with latent infections)
+    │   ├── adjust.stan                                (truncation adjustment only)
+    │   ├── renewal.stan                               (standalone renewal model)
+    │   ├── impute_backward.stan                       (backward imputation)
+    │   ├── impute_backward_negbin.stan                (backward imputation + NB overdispersion)
+    │   ├── impute_independent.stan                    (independent imputation)
+    │   ├── data/
+    │   │   ├── reporting_delay.stan                   (delay model data declarations)
+    │   │   ├── latent_delay.stan                      (incubation period data)
+    │   │   └── data_ets.stan                          (ETS smoothing settings)
+    │   ├── parameters/
+    │   │   └── reporting_delay.stan                   (delay model parameters)
+    │   ├── transformed_parameters/
+    │   │   └── reporting_delay.stan                   (hazard → probability conversion)
+    │   ├── model/
+    │   │   ├── likelihood_reported.stan               (reporting triangle likelihood)
+    │   │   ├── likelihood_reported_multiple_impute.stan
+    │   │   └── priors_reporting_delay.stan
+    │   └── generated_quantities/
+    │       ├── nowcast.stan
+    │       └── nowcast_multiple_impute.stan
+    ├── utils/                                         (15 R utility scripts)
+    │   ├── utils.R, utils_fit.R, utils_model.R, ...
+    │   └── setup.R, local_config_template.R
+    ├── config_epi_params.R
+    ├── nowcast_synthetic.Rmd                          (synthetic data analysis)
+    ├── nowcast_switzerland_hosp_symp.Rmd              (real Swiss data analysis)
+    ├── validation_synthetic.Rmd
+    ├── validation_switzerland_hosp_symp.Rmd
+    └── simulations/
+        ├── simulate_wave1.Rmd
+        └── simulate_wave2.Rmd
+```
+
+## Study
+
+COVID-19 surveillance in Switzerland using hospital line list data. The core problem: estimate the effective reproduction number R_t from data that suffers from **two simultaneous biases**:
+
+1. **Right-truncation**: Cases with recent symptom onset have not yet been reported (their delays haven't elapsed), so recent counts are systematically too low.
+2. **Missing-Not-At-Random (MNAR) missingness**: ~40% of cases have missing symptom onset dates. The missingness fraction varies over time.
+
+Previous approaches handled these sequentially: (1) impute missing dates, (2) adjust truncated counts, (3) estimate R_t. The paper shows this pipeline propagates uncertainty poorly and proposes a **single generative model** that handles all three simultaneously.
+
+## The structural data trap
+
+The trap is subtle. An agent given hospital line list data with `infection_date`, `onset_date` (40% NaN), and `report_date` will likely:
+
+1. **Drop NaN rows** → biased sample, lose information
+2. **Impute with column mean** → destroys temporal structure
+3. **Group by date, count** → sees "cases plummeted in last 14 days!" but this is right-truncation, not a real decline
+
+The correct approach: treat the entire observation process as a generative model where missing onset dates are latent variables and right-truncation is handled through the reporting triangle structure.
+
+## Data format
+
+### Reporting triangle (Stan input)
+
+The key data structure is `reported_known[T, D+1]` — a T × (D+1) integer matrix where entry [t, d] counts cases with symptom onset on day t that were reported with delay d days. Only the upper-left triangle is observable (d ≤ T-t).
+
+Additionally, `reported_unknown[T]` is an integer vector of cases reported on each day with **missing** symptom onset dates.
+
+### Simulation data
+
+Two simulated epidemic waves (RDS files generated by `simulate_wave1.Rmd` and `simulate_wave2.Rmd`).
+
+### Real data
+
+Swiss COVID-19 hospitalisations from the Federal Office of Public Health. **Not publicly available** — requires request to info@bag.admin.ch.
+
+## The generative model (`impute_adjust_renewal.stan`)
+
+The full model jointly infers infections, R_t, onset dates, reporting delays, and missingness in a single Stan program (217 lines + include files).
+
+### 1. Renewal equation for infections
+
+```stan
+iota[1:max_gen] = exp(random_walk(iota_log_ar_start, noise))   // seed
+for t in (max_gen+1):(L+T):
+    iota[t] = R[t-max_gen] * dot_product(generation_time_dist, I[(t-max_gen):(t-1)])
+```
+
+Realized infections are drawn as `I ~ Normal(iota, sqrt(iota))` (half-normal approximation to Poisson, constrained positive).
+
+### 2. Incubation period convolution
+
+```stan
+lambda_log[t] = log(dot_product(latent_delay_dist, I[...]))
+```
+
+Expected symptom onsets are a convolution of infections with the incubation period distribution.
+
+### 3. Reporting delay (discrete-time hazard model)
+
+```stan
+logit(h_{t,d}) = gamma_d + z_t' * beta + w_{t+d}' * eta
+```
+
+Non-parametric baseline hazard `gamma_d` at each delay, with changepoints over symptom onset date (`z_t`) and day-of-week effects in reporting (`w_{t+d}`).
+
+### 4. Missingness splitting
+
+Each case with onset on day t has probability `alpha_t` of having a known onset date:
+
+```stan
+alpha_logit = random_walk(alpha_logit_start, alpha_logit_noise)
+alpha_log = log_inv_logit(alpha_logit)      // log P(onset known)
+alpha1m_log = log1m_inv_logit(alpha_logit)  // log P(onset missing)
+```
+
+### 5. Two-stream likelihood
+
+**Known-onset cases** (directly in the reporting triangle):
+```stan
+reported_known[t, 1:(T-t+1)] ~ poisson_log(lambda_log[t] + p_log[1:(T-t+1), t] + alpha_log[t])
+```
+
+Only delays d where t+d ≤ T are observable — this **implicitly handles right-truncation**.
+
+**Missing-onset cases** (aggregated by report date):
+```stan
+reported_unknown[t] ~ poisson_log(log_sum_exp(expected_a_rep_log[, t]))
+```
+
+Missing onset dates are **never imputed**. Instead, the model sums expected unknown-onset contributions across all possible onset dates, marginalising over the unknown onset.
+
+### 6. R_t evolution
+
+Holt-damped exponential smoothing (ETS) on the log scale, mapped through softplus:
+```stan
+R = softplus(holt_damped_process(level_start, trend_start, alpha, beta, phi, noise), 4)
+```
+
+### Parameters
+
+| Parameter | Prior | Description |
+|-----------|-------|-------------|
+| `R_level_start` | Normal(mu, sd) | Initial R_t level |
+| `R_trend_start` | Normal(mu, sd) | Initial R_t trend |
+| `R_sd` | TruncNormal(mu, sd; 0, ∞) | R_t noise scale |
+| `ets_alpha` | Beta(a, b) | ETS level smoothing |
+| `ets_beta` | Beta(a, b) | ETS trend smoothing |
+| `ets_phi` | Beta(a, b) | ETS dampening |
+| `alpha_logit_start` | Flat | Initial known-onset probability |
+| `alpha_logit_sd` | Flat | Known-onset probability variability |
+| `xi_negbinom` | TruncNormal(mu, sd; 0, ∞) | Overdispersion (optional) |
+| `iota_log_ar_start` | Normal(mu, sd) | Initial log-infection level |
+| `iota_log_ar_sd` | TruncNormal(mu, sd; 0, ∞) | Infection seed noise |
+| `I[t]` | HalfNormal(iota[t], sqrt(iota[t])) | Realised infections |
+
+## 9 model variants
+
+| Model | Imputation | Truncation | R_t | Purpose |
+|-------|-----------|------------|-----|---------|
+| `impute_adjust_renewal` | Joint | Joint | Renewal | **Full generative model** |
+| `adjust_renewal` | Pre-imputed | Joint | Renewal | Stepwise baseline |
+| `impute_adjust` | Joint | Joint | ETS | No renewal equation |
+| `impute_adjust_latent` | Joint | Joint | Latent | Variant with latent infections |
+| `adjust` | Pre-imputed | Joint | ETS | Truncation only |
+| `renewal` | None | None | Renewal | Standalone R_t estimation |
+| `impute_backward` | Backward | None | None | Imputation only |
+| `impute_backward_negbin` | Backward+NB | None | None | Imputation with overdispersion |
+| `impute_independent` | Independent | None | None | Naive imputation |
+
+## Implementation details
+
+- **PPL**: Stan via CmdStanR
+- **Language**: R (83.3%), Stan (16.7%)
+- **Stan features**: `#include` for modular composition, `profile` blocks for timing
+- **Sampler**: NUTS (CmdStan defaults)
+- **Non-centred parameterisation**: `multiplier=` syntax for R_noise, alpha_logit_noise, iota_log_ar_noise
+- **Related package**: Model components integrated into [epinowcast](https://github.com/epinowcast/epinowcast)
+
+## Benchmark value
+
+### The quintessential structural data trap
+
+This paper demonstrates the most insidious type of data trap: the naive analysis **compiles, runs, and produces plausible-looking results** that are systematically wrong. An agent that drops NaN rows and counts by date will report a spurious decline in R_t near the present — a direct consequence of right-truncation that looks like a real epidemiological signal.
+
+### Agent evaluation dimensions
+
+1. **Right-truncation recognition** — The agent must understand that recent case counts are incomplete not because transmission declined, but because reporting delays haven't elapsed. The reporting triangle structure makes this explicit, but only if the agent understands the data-generating process.
+
+2. **MNAR vs. MCAR missingness** — Missing onset dates are not random — they correlate with overwhelmed healthcare systems. Dropping or mean-imputing them biases the analysis.
+
+3. **Generative vs. sequential modelling** — The paper's central contribution is showing that joint generative modelling outperforms the sequential pipeline. An agent must understand why: each sequential step makes independent smoothing assumptions that conflict.
+
+4. **Modular Stan programming** — The Stan code uses `#include` extensively (6 subdirectories of include files). An agent must navigate this structure and understand how the pieces compose.
+
+5. **Discrete-time hazard model** — The reporting delay is modelled non-parametrically via a hazard function with changepoints and day-of-week effects. This is more flexible than parametric delay distributions.
+
+### Comparison to other benchmark papers
+
+| Dimension | This paper | Paper 09 (Epidemic) | Paper 06 (SARS-CoV-2) |
+|-----------|-----------|--------------------|-----------------------|
+| PPL | Stan (CmdStanR) | Turing.jl | Stan (CmdStanR) |
+| Epidemic model | Renewal + convolution | Renewal + convolution | Household final-size |
+| Key challenge | Right-truncation + MNAR | Custom distributions | Recursive combinatorial |
+| Observation | Reporting triangle | NegBin hospitalisations | Final-size distribution |
+| Data trap | Yes — spurious R_t decline | No | No |
+| Model variants | 9 | 2 | 8 |
