@@ -9,10 +9,10 @@ Each paper was included because it meets all of the following:
 1. **Open data and code** — paper PDF, datasets, and reference implementation are all publicly available.
 2. **Non-trivial Bayesian workflow** — the modeling goes beyond textbook examples: custom likelihoods, reparameterizations, numerical stability tricks, or multi-model comparison.
 3. **Human insight required** — the code contains modeling decisions that are hard to derive from first principles (e.g., data augmentation for censoring, recursive combinatorial likelihoods, power-mean aggregation with estimated exponent).
-4. **Reproducible enough** — data and code are sufficiently complete to understand and re-run the analysis, even if some path fixes are needed.
+4. **Complete reference material** — the paper, data, and code together provide enough information to replicate the modeling approach, even if the original scripts aren't runnable out of the box.
 5. **Diverse PPL coverage** — the collection spans Stan, PyMC, NumPyro, Turing.jl, and brms to cover the major probabilistic programming ecosystems.
 
-Papers were dropped if they lacked executable code, had severe reproducibility blockers, or offered only standard textbook-level modeling.
+Papers were dropped if they lacked reference code entirely or offered only standard textbook-level modeling.
 
 ### `post_cutoff/`
 
