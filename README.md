@@ -1,47 +1,31 @@
 # Bayesian Paper Collection
 
-A curated collection of Bayesian modeling papers with open data and reproducible reference models. Each entry packages the full paper PDF, original datasets, and original code across diverse probabilistic programming ecosystems (Stan, PyMC, NumPyro, Turing.jl, brms).
+Bayesian modeling papers with open data and reference code. Each entry has the paper PDF, datasets, and original code. Organised by publication date relative to LLM knowledge cutoffs (~Aug 2025).
 
-## Papers
+### `post_cutoff/`
 
-Papers are organised by publication date relative to the latest LLM knowledge cutoff (Aug 31, 2025 — GPT-5.2 / Sonnet 4.6).
+| Directory | Paper | PPL |
+|-----------|-------|-----|
+| `rat_multisensory_psychophysics/` | Zanzi et al. (Oct 2025) — Rat visual perceptual space | Stan |
+| `diffusion_truncation_censoring/` | Henrich & Klauer (2026) — Diffusion model with censoring | Stan |
+| `h5n1_viral_kinetics/` | Eales et al. (Jan 2026) — H5N1 viral kinetics in dairy cattle | Stan |
+| `brain_cell_counts/` | Dimmock et al. (Nov 2025) — Hierarchical brain cell counts | Stan |
 
-### `post_cutoff/` — published after Aug 2025
+### `around_cutoff/`
 
-| Directory | Paper | Published | PPL |
-|-----------|-------|-----------|-----|
-| `rat_multisensory_psychophysics/` | Zanzi et al. — Rat visual perceptual space | Oct 2025 | Stan |
-| `diffusion_truncation_censoring/` | Henrich & Klauer — Diffusion model with censoring | 2026 | Stan |
-| `h5n1_viral_kinetics/` | Eales et al. — H5N1 viral kinetics in dairy cattle | Jan 2026 | Stan |
-| `brain_cell_counts/` | Dimmock et al. — Hierarchical brain cell counts | Nov 2025 | Stan |
+| Directory | Paper | PPL |
+|-----------|-------|-----|
+| `systems_biology_multimodel/` | Linden-Santangeli et al. (Aug 2025) — Systems biology multimodel inference | PyMC |
+| `robust_astronomy/` | Martin & Mortlock (Aug 2025) — Robust Bayesian regression in astronomy | NumPyro/Stan |
 
-### `around_cutoff/` — published within weeks of Aug 2025
+### `pre_cutoff/`
 
-| Directory | Paper | Published | PPL |
-|-----------|-------|-----------|-----|
-| `systems_biology_multimodel/` | Linden-Santangeli et al. — Systems biology multimodel inference | Aug 2025 | PyMC |
-| `robust_astronomy/` | Martin & Mortlock — Robust Bayesian regression in astronomy | Aug 2025 | NumPyro/Stan |
-
-### `pre_cutoff/` — published before Aug 2025
-
-| Directory | Paper | Published | PPL |
-|-----------|-------|-----------|-----|
-| `rabies_vaccination/` | Ferguson et al. — Rabies vaccination coverage heterogeneity | May 2025 | brms/Stan |
-| `zero_inflated_beta/` | Pietila — Zero-inflated plant cover, left-censored Beta regression | Jun 2025 | Stan/brms |
-| `nowcasting/` | Lison et al. — Generative Bayesian nowcasting | Apr 2024 | Stan |
-| `sars2_household_transmission/` | van Boven et al. — SARS-CoV-2 household transmission | 2024 | Stan |
-| `pain_learning/` | Onysk et al. — Pain learning and statistical prediction | 2024 | RStan |
-| `supernova_hierarchical/` | Grayling et al. — Hierarchical supernova dust inference | 2024 | NumPyro/JAX |
-| `epidemic_turing/` | Koher et al. — Epidemic modelling with survey covariates | 2023 | Turing.jl |
-
-## LLM knowledge cutoffs (as of Feb 2026)
-
-| Model | Knowledge Cutoff | Training Data Cutoff | Released |
-|-------|-----------------|---------------------|----------|
-| Claude Opus 4.6 | May 2025 | Aug 2025 | Feb 5, 2026 |
-| Claude Sonnet 4.6 | Aug 2025 | Jan 2026 | Feb 17, 2026 |
-| GPT-5.2 (all variants) | Aug 31, 2025 | — | Dec 11, 2025 |
-| GPT-5.3-Codex | ~Aug 2025 (inherits 5.2) | — | Feb 5, 2026 |
-| Gemini 3.1 Pro | Jan 2025 | — | Feb 19, 2026 |
-
-Pre-cutoff papers remain valuable for testing modelling ability rather than memorisation — but post-cutoff papers have the strongest guarantee against data contamination.
+| Directory | Paper | PPL |
+|-----------|-------|-----|
+| `rabies_vaccination/` | Ferguson et al. (May 2025) — Rabies vaccination coverage heterogeneity | brms/Stan |
+| `zero_inflated_beta/` | Pietila (Jun 2025) — Zero-inflated plant cover, left-censored Beta | Stan/brms |
+| `nowcasting/` | Lison et al. (Apr 2024) — Generative Bayesian nowcasting | Stan |
+| `sars2_household_transmission/` | van Boven et al. (2024) — SARS-CoV-2 household transmission | Stan |
+| `pain_learning/` | Onysk et al. (2024) — Pain learning and statistical prediction | RStan |
+| `supernova_hierarchical/` | Grayling et al. (2024) — Hierarchical supernova dust inference | NumPyro/JAX |
+| `epidemic_turing/` | Koher et al. (2023) — Epidemic modelling with survey covariates | Turing.jl |
