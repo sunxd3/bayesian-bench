@@ -1,0 +1,124 @@
+{
+  "persons": [
+    {
+      "id": 1,
+      "lean_body_mass_kg": 62.0,
+      "proportion_body_fat": 0.114,
+      "pulmonary_flow_L_per_min": 7.6,
+      "experiments": [
+        {
+          "exposure_ppm": 72,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   8580],
+          "exhaled_air_ug_per_L":    [340,   99,   44,    33,    6.3,   3.45,   2.1,    0.76],
+          "venous_blood_mg_per_L":   [2.8, null, null,  0.92,   0.17,  0.082,  0.055,  0.018]
+        },
+        {
+          "exposure_ppm": 144,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   8580],
+          "exhaled_air_ug_per_L":    [632,  219,  116,    58,   12.9,   5.2,    3.5,    1.2],
+          "venous_blood_mg_per_L":   [5.7, null, null,  1.76,   0.36,  0.147,  0.106,  0.072]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "lean_body_mass_kg": 71.0,
+      "proportion_body_fat": 0.134,
+      "pulmonary_flow_L_per_min": 11.6,
+      "experiments": [
+        {
+          "exposure_ppm": 72,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   8580],
+          "exhaled_air_ug_per_L":    [345,  101,   76,    49,    6.3,   2.7,    1.7,    0.78],
+          "venous_blood_mg_per_L":   [3.0, null, null,  1.2,    0.15,  0.066,  0.051,  0.020]
+        },
+        {
+          "exposure_ppm": 144,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   8580],
+          "exhaled_air_ug_per_L":    [699,  241,  120,    75,   11.4,   6.7,    4.1,    1.3],
+          "venous_blood_mg_per_L":   [8.8, null, null,  2.9,    0.36,  0.19,   0.12,   0.036]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "lean_body_mass_kg": 71.0,
+      "proportion_body_fat": 0.134,
+      "pulmonary_flow_L_per_min": 10.0,
+      "experiments": [
+        {
+          "exposure_ppm": 72,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   8580],
+          "exhaled_air_ug_per_L":    [294,  118,   83,    48,    5.2,   2.55,   1.3,    0.65],
+          "venous_blood_mg_per_L":   [3.2, null, null,  1.16,   0.115, 0.048,  0.035,  0.015]
+        },
+        {
+          "exposure_ppm": 144,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   5700,  10020],
+          "exhaled_air_ug_per_L":    [569,  178,  103,    64,     11,   5.4,    3.0,    2.0,    0.82],
+          "venous_blood_mg_per_L":   [6.4, null, null,  2.36,   0.260, 0.177,  0.085,  0.085,  0.024]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "lean_body_mass_kg": 74.0,
+      "proportion_body_fat": 0.14,
+      "pulmonary_flow_L_per_min": 11.3,
+      "experiments": [
+        {
+          "exposure_ppm": 72,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   5700,  10020],
+          "exhaled_air_ug_per_L":    [329,  117,   65,    30,    7.2,   2.6,    1.62,   1.08,   0.24],
+          "venous_blood_mg_per_L":   [3.1, null, null,  1.3,    0.185, 0.068,  0.040,  0.037,  0.0065]
+        },
+        {
+          "exposure_ppm": 144,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   5700,  10020],
+          "exhaled_air_ug_per_L":    [646,  249,  126,   101,     11,   5.4,    2.7,    2.1,    0.6],
+          "venous_blood_mg_per_L":   [6.0, null, null,  2.48,   0.36,  0.165,  0.071,  0.064,  0.018]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "lean_body_mass_kg": 61.0,
+      "proportion_body_fat": 0.09,
+      "pulmonary_flow_L_per_min": 12.3,
+      "experiments": [
+        {
+          "exposure_ppm": 72,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   5700,  10020],
+          "exhaled_air_ug_per_L":    [360,   93,   44,    21,    6.8,   2.4,    1.4,    0.96,   0.38],
+          "venous_blood_mg_per_L":   [2.8, null, null,  1.12,   0.14,  0.068,  0.047,  0.036,  0.014]
+        },
+        {
+          "exposure_ppm": 144,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   8580],
+          "exhaled_air_ug_per_L":    [686,  108,   98,  65.5,   11.2,   6.2,    3.4,    1.4],
+          "venous_blood_mg_per_L":   [6.4, null, null,  2.96,   0.35,  0.19,   0.105,  0.05]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "lean_body_mass_kg": 61.0,
+      "proportion_body_fat": 0.208,
+      "pulmonary_flow_L_per_min": 8.8,
+      "experiments": [
+        {
+          "exposure_ppm": 72,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   5700,  10020],
+          "exhaled_air_ug_per_L":    [292,   64,   50,    23,   4.05,   2.5,    2.0,    1.45,   0.9],
+          "venous_blood_mg_per_L":   [2.6, null, null,  0.96,   0.105, 0.070,  0.051,  0.050,  0.025]
+        },
+        {
+          "exposure_ppm": 144,
+          "times_minutes":           [240,  245,  270,   360,   1320,  2760,   4260,   5700,  10020],
+          "exhaled_air_ug_per_L":    [628,  193,  100,    56,    9.3,   6.0,    5.1,    3.2,    1.5],
+          "venous_blood_mg_per_L":   [6.0, null, null,  1.76,   0.245, 0.16,   0.12,   0.098,  0.052]
+        }
+      ]
+    }
+  ]
+}

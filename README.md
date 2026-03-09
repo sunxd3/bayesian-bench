@@ -21,6 +21,8 @@ Papers were dropped if they lacked reference code entirely or offered only stand
 | `brain_cell_counts/` | Dimmock et al. (2025) — Hierarchical brain cell counts | Stan |
 | `diffusion_truncation_censoring/` | Henrich & Klauer (2026) — Diffusion model with censoring | Stan |
 | `epidemic_turing/` | Koher et al. (2023) — Epidemic modelling with survey covariates | Turing.jl |
+| `gbj_perc_pbpk/` | Gelman, Bois & Jiang (1996) — Physiological pharmacokinetic analysis | GNU MCSim |
+| `h5n1_viral_kinetics/` | Eales et al. (2026) — H5N1 viral kinetics in dairy cattle | Stan |
 | `nowcasting/` | Lison et al. (2024) — Generative Bayesian nowcasting | Stan |
 | `pain_learning/` | Onysk et al. (2024) — Pain learning and statistical prediction | RStan |
 | `rabies_vaccination/` | Ferguson et al. (2025) — Rabies vaccination coverage heterogeneity | brms/Stan |
@@ -29,3 +31,4 @@ Papers were dropped if they lacked reference code entirely or offered only stand
 | `sars2_household_transmission/` | van Boven et al. (2024) — SARS-CoV-2 household transmission | Stan |
 | `supernova_hierarchical/` | Grayling et al. (2024) — Hierarchical supernova dust inference | NumPyro/JAX |
 | `systems_biology_multimodel/` | Linden-Santangeli et al. (2025) — Systems biology multimodel inference | PyMC |
+| `zero_inflated_beta/` | Tang et al. (2023) — Zero-inflated Beta distribution regression | Custom R Gibbs |
